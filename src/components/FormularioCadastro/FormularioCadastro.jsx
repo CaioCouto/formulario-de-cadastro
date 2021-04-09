@@ -1,15 +1,36 @@
-import React from 'react'
-import { 
-    Button, TextField, Switch, FormControlLabel,
-
-} from '@material-ui/core'
+import React, { useState } from 'react'
+import { Button, TextField, Switch, FormControlLabel } from '@material-ui/core'
 
 function FormularioCadastro() {
+
+    const [ nome, setNome ] = useState('')
+    const [ sobrenome, setSobrenome ] = useState('')
+    const [ cpf, setCpf ] = useState('')
+
+    function handleNomeChange(e) {
+        let tmpNome = e.target.value
+        if (tmpNome.length >= 3) {
+            tmpNome = tmpNome.substring(0, 3)
+        }
+        setNome(tmpNome)
+        console.log(nome)
+    }
+
+    function handleSobrenomeChange(e) {
+        setSobrenome(e.target.value)
+    }
+
+    function handleCpfChange(e) {
+        setCpf(e.target.value)
+    }
+
     return(
         <form>
             <TextField
-                id='nome' 
-                label="nome"
+                onChange={e => handleNomeChange(e)}
+                value={nome}
+                id="nome" 
+                label="Nome"
                 type="text"
                 margin="normal"
                 variant="outlined"
@@ -18,7 +39,8 @@ function FormularioCadastro() {
             />
 
             <TextField
-                id='sobrenome' 
+                onChange={e => handleSobrenomeChange(e)}
+                id="sobrenome" 
                 label="sobrenome" 
                 type="text"
                 margin="normal"
@@ -28,7 +50,8 @@ function FormularioCadastro() {
             />
 
             <TextField
-                id='cpf' 
+                onChange={e => handleCpfChange(e)}
+                id="cpf" 
                 label="cpf"
                 type="text"
                 margin="normal"
