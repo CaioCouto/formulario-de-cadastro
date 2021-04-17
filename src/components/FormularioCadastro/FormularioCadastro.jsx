@@ -1,93 +1,51 @@
-import React, { useState } from 'react'
-import { Button, TextField, Switch, FormControlLabel } from '@material-ui/core'
+import React, { useState, useEffect } from 'react'
+import { Typography, Stepper, Step, StepLabel } from '@material-ui/core'
 
-function FormularioCadastro() {
+import DadosEntrega from './DadosEntrega'
+import DadosPessoais from './DadosPessoais'
+import DadosUsuario from './DadosUsuario'
 
-    const [ nome, setNome ] = useState('')
-    const [ sobrenome, setSobrenome ] = useState('')
-    const [ cpf, setCpf ] = useState('')
+function FormularioCadastro({ aoEnviar }) {
 
-    function handleNomeChange(e) {
-        let tmpNome = e.target.value
-        if (tmpNome.length >= 3) {
-            tmpNome = tmpNome.substring(0, 3)
+    const [ etapaAtual, setEtapaAtual ] = useState(0)
+    const [ dadosColetados, setDadosColetados ] = useState({})
+    
+    const formularios = [
+        <DadosUsuario aoEnviar={coletaDados}/>,
+        <DadosPessoais aoEnviar={coletaDados}/>,
+        <DadosEntrega aoEnviar={coletaDados}/>,
+        <Typography variant="h5" align="center">Obrigado por se cadastrar!</Typography>
+    ]
+
+    useEffect(() => {
+        const ultimoForm = formularios.length - 1
+        if(etapaAtual === ultimoForm) { 
+            aoEnviar(dadosColetados)
         }
-        setNome(tmpNome)
-        console.log(nome)
+    })
+
+    function coletaDados(dados) {
+        setDadosColetados({
+            ...dadosColetados,
+            ...dados
+        })
+        proximaEtapa()
     }
 
-    function handleSobrenomeChange(e) {
-        setSobrenome(e.target.value)
+    function proximaEtapa() {
+        setEtapaAtual(etapaAtual + 1)
     }
 
-    function handleCpfChange(e) {
-        setCpf(e.target.value)
-    }
-
-    return(
-        <form>
-            <TextField
-                onChange={e => handleNomeChange(e)}
-                value={nome}
-                id="nome" 
-                label="Nome"
-                type="text"
-                margin="normal"
-                variant="outlined"
-                fullWidth
-                required
-            />
-
-            <TextField
-                onChange={e => handleSobrenomeChange(e)}
-                id="sobrenome" 
-                label="sobrenome" 
-                type="text"
-                margin="normal"
-                variant="outlined"
-                fullWidth
-                required
-            />
-
-            <TextField
-                onChange={e => handleCpfChange(e)}
-                id="cpf" 
-                label="cpf"
-                type="text"
-                margin="normal"
-                variant="outlined"
-                fullWidth
-                required
-            />
-
-            <FormControlLabel
-                control={
-                    <Switch 
-                        name="promocoes"
-                        color="primary"
-                    />
-                }
-                label="Promoções"
-            />
-
-            <FormControlLabel
-                control={
-                    <Switch 
-                        name="novidades"
-                        color="primary"
-                    />
-                }
-                label="Novidades"
-            />
-
-            <Button 
-                type="submit"
-                variant="contained" 
-                color="primary"
-            >
-                Cadastrar
-            </Button>
-        </form>
+    return (
+        <>
+            <Stepper activeStep={etapaAtual}> 
+                <Step><StepLabel>Login</StepLabel></Step>
+                <Step><StepLabel>Pessoal</StepLabel></Step>
+                <Step><StepLabel>Entrega</StepLabel></Step>
+                <Step><StepLabel>Finalização</StepLabel></Step>
+            </Stepper>
+            { formularios[etapaAtual] } 
+        </>
     )
 }
 
